@@ -1,9 +1,10 @@
 from commands2 import Command, Subsystem
-from phoenix6 import StatusCode
+from phoenix6 import StatusCode, StatusSignal, ampere
 from phoenix6.configs import TalonFXConfiguration
 from phoenix6.controls import Follower, MotionMagicTorqueCurrentFOC
 from phoenix6.hardware import TalonFX
 from phoenix6.signals.spn_enums import GravityTypeValue
+from wpilib import SmartDashboard
 
 from constants import Constants
 from subsystems.elevator.elevatorconstants import ElevatorConstants
@@ -67,5 +68,10 @@ class Elevator(Subsystem):
         """
         Overridden to monitor for reaching the bottom or top hard stop.
         If a hard stop is reached, encoder position is reset.
+
+        For now, just some dashboard work.
         """
-        pass
+        current: StatusSignal[ampere] = self.left.get_torque_current()
+        SmartDashboard.putNumber("Elevator left amps", current.value())
+        current = self.right.get_torque_current()
+        SmartDashboard.putNumber("Elevator right amps", current.value())
